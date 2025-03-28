@@ -113,39 +113,41 @@
                 return 0;
 
             if (next == MarkEnum.X)
-            {
-                // Minimizing (X is computer's opponent)
-                int best = int.MaxValue;
-                for (int i = 0; i < clonedState.Length; i++)
-                {
-                    if (clonedState[i] != null)
-                        continue;
-
-                    MarkEnum?[] newState = (MarkEnum?[])clonedState.Clone();
-
-                    newState[i] = MarkEnum.X;
-
-                    best = int.Min(best, Minimax(newState, MarkEnum.O));
-                }
-                return best;
-            }
+                return Minimize(clonedState);
             else
+                return Maximize(clonedState);
+        }
+
+        private static int Minimize(MarkEnum?[] clonedState)
+        {
+            // Minimizing (X is computer's opponent)
+            int best = int.MaxValue;
+            for (int i = 0; i < clonedState.Length; i++)
             {
-                // Maximizing (O is computer)
-                int best = int.MinValue;
-                for (int i = 0; i < clonedState.Length; i++)
-                {
-                    if (clonedState[i] != null)
-                        continue;
+                if (clonedState[i] != null)
+                    continue;
 
-                    MarkEnum?[] newState = (MarkEnum?[])clonedState.Clone();
-
-                    newState[i] = MarkEnum.O;
-
-                    best = int.Max(best, Minimax(newState, MarkEnum.X));
-                }
-                return best;
+                clonedState[i] = MarkEnum.X;
+                best = int.Min(best, Minimax(clonedState, MarkEnum.O));
+                clonedState[i] = null;
             }
+            return best;
+        }
+
+        private static int Maximize(MarkEnum?[] clonedState)
+        {
+            // Maximizing (O is computer)
+            int best = int.MinValue;
+            for (int i = 0; i < clonedState.Length; i++)
+            {
+                if (clonedState[i] != null)
+                    continue;
+
+                clonedState[i] = MarkEnum.O;
+                best = int.Max(best, Minimax(clonedState, MarkEnum.X));
+                clonedState[i] = null;
+            }
+            return best;
         }
 
         public bool IsBoardFull() => IsBoardFull(state);
